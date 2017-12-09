@@ -25,9 +25,10 @@
 
 
     <h3>Comments:</h3>
-    <form action="{{ 'api/posts/'.$post->id.'/comment' }}" method="POST" style="margin-bottom:20px;">
-      <textarea id="commentBody" class="form-control" rows="3" name="body" placeholder="Contribute your two cents."></textarea>
-    </form>
+    <div style="margin-bottom:20px;">
+      <textarea id="commentBody" class="form-control" rows="3" name="body" placeholder="Contribute your two cents." v-model="commentBox"></textarea>
+      <button class="btn btn-success" style="margin-top:10px">Save Comment</button>
+    </div>
 
 
     <div class="media" style="margin-top:20px;" v-for="comment in comments">
@@ -57,7 +58,8 @@
         count: 0,
         post: {!! json_encode($post) !!},
         user: {!! json_encode(Auth::user()) !!},
-        comments: {}
+        comments: {},
+        commentBox: ''
       },
       mounted() {
         this.listen();
@@ -65,13 +67,26 @@
       },
       methods: {
         getComments() {
-          axios.get('api/posts/'+this.post.id+'/comments', {
+          axios.get('/api/posts/'+this.post.id+'/comments', {
             params: {
               api_token: this.user.api_token
             }
           })
-          .then(function (response) {
+          .then((response) => {
             this.comments = response.data
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+        },
+        postComments() {
+          axios.post('/api/posts/'+this.post.id+'/comment', {
+            api_token: this.user.api_token,
+            body: this.commentBox
+          })
+          .then((response) => {
+            this.commentBox = '';
+            this.comments.unshift(response.data)
           })
           .catch(function (error) {
             console.log(error);
