@@ -22,7 +22,24 @@
       el: '#app',
       data: {
         viewers: [],
-        counter: 0
+        count: 0
+      },
+      mounted() {
+        this.listen();
+      },
+      methods: {
+        listen() {
+          Echo.join('posts.'+'{{ $post->id }}')
+              .here((users) => {
+                this.count = users.length;
+              })
+              .joining((user) => {
+                this.count++;
+              })
+              .leaving((user) => {
+                this.count--;
+              });
+        }
       }
     });
     </script>
