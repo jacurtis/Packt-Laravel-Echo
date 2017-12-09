@@ -22,6 +22,29 @@
         </li>
       </ul>
     </div>
+
+
+    <h3>Comments:</h3>
+    <form action="{{ 'api/posts/'.$post->id.'/comment' }}" method="POST" style="margin-bottom:20px;">
+      <textarea id="commentBody" class="form-control" rows="3" name="body" placeholder="Contribute your two cents."></textarea>
+    </form>
+
+
+    <div class="media" style="margin-top:20px;" v-for="comment in comments">
+      <div class="media-left">
+        <a href="#">
+          <img class="media-object" src="http://placeimg.com/80/80" alt="...">
+        </a>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">@{{ comment.user.name }} said...</h4>
+        <p>
+          @{{ comment.body }}
+        </p>
+        <span style="color: #aaa;">on @{{ comment.created_at }}</span>
+      </div>
+    </div>
+
   </div>
 @endsection
 
@@ -31,12 +54,29 @@
       el: '#app',
       data: {
         viewers: [],
-        count: 0
+        count: 0,
+        post: {!! json_encode($post) !!},
+        user: {!! json_encode(Auth::user()) !!},
+        comments: {}
       },
       mounted() {
         this.listen();
+        this.getComments();
       },
       methods: {
+        getComments() {
+          axios.get('api/posts/'+this.post.id+'/comments', {
+            params: {
+              api_token: this.user.api_token
+            }
+          })
+          .then(function (response) {
+            this.comments = response.data
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+        },
         listen() {
           Echo.join('posts.'+'{{ $post->id }}')
               .here((users) => {
