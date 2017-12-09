@@ -16,6 +16,11 @@
 
     <div class="alert alert-info">
       @{{ count }} people are reading this right now.
+      <ul style="margin-top:10px">
+        <li v-for="viewer in viewers">
+          Id: @{{ viewer.id }} - @{{ viewer.name }}
+        </li>
+      </ul>
     </div>
   </div>
 @endsection
@@ -36,12 +41,15 @@
           Echo.join('posts.'+'{{ $post->id }}')
               .here((users) => {
                 this.count = users.length;
+                this.viewers = users;
               })
               .joining((user) => {
                 this.count++;
+                this.viewers.push(user);
               })
               .leaving((user) => {
                 this.count--;
+                _.pullAllBy(this.viewers, [user]);
               });
         }
       }
