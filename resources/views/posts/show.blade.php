@@ -15,3 +15,15 @@
     </p>
   </div>
 @endsection
+
+@section('scripts')
+  <script>
+    let app = new Vue({
+      el: '#app',
+      data: {
+        viewers: [],
+        counter: 0
+      }
+    });
+    </script>
+@endsection
