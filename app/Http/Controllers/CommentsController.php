@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Comment;
 use Auth;
 
 class CommentsController extends Controller
@@ -33,6 +34,8 @@ class CommentsController extends Controller
         'user_id' => Auth::user()->id,
         'post_id' => $post->id
       ]);
+
+      $comment = Comment::where('id', $comment->id)->with('user')->first();
 
       return $comment->toJson();
     }

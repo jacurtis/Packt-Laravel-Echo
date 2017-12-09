@@ -26,8 +26,8 @@
 
     <h3>Comments:</h3>
     <div style="margin-bottom:20px;">
-      <textarea id="commentBody" class="form-control" rows="3" name="body" placeholder="Contribute your two cents." v-model="commentBox"></textarea>
-      <button class="btn btn-success" style="margin-top:10px">Save Comment</button>
+      <textarea id="commentBody" class="form-control" rows="3" name="body" placeholder="Contribute your two cents." v-model="commentBox" @enter.prevent="postComment"></textarea>
+      <button class="btn btn-success" style="margin-top:10px" @click.prevent="postComment">Save Comment</button>
     </div>
 
 
@@ -79,7 +79,7 @@
             console.log(error);
           })
         },
-        postComments() {
+        postComment() {
           axios.post('/api/posts/'+this.post.id+'/comment', {
             api_token: this.user.api_token,
             body: this.commentBox
