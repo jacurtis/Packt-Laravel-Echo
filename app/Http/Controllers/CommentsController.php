@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use App\Comment;
 use Auth;
+use App\Events\NewComment;
 
 class CommentsController extends Controller
 {
@@ -36,6 +37,8 @@ class CommentsController extends Controller
       ]);
 
       $comment = Comment::where('id', $comment->id)->with('user')->first();
+
+      broadcast(new NewComment($comment))->toOthers();
 
       return $comment->toJson();
     }

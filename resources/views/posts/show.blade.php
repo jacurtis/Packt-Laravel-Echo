@@ -105,6 +105,9 @@
               .leaving((user) => {
                 this.count--;
                 _.pullAllBy(this.viewers, [user]);
+              })
+              .listen('NewComment', (comment) => {
+                this.comments.unshift(comment);
               });
         }
       }
